@@ -13,11 +13,11 @@ namespace QuaryChain
     /// </summary>
     public class Query
     {
-        private readonly SqlConnection _dbConnection;
+        private readonly QueryConnection _dbConnection;
         private readonly string _query;
         private readonly List<SqlParameter> _paramaters;
         private readonly Dictionary<string, string> _parametersReplace;
-        public Query(SqlConnection dbConnection, string query)
+        public Query(QueryConnection dbConnection, string query)
         {
             _dbConnection = dbConnection;
             _query = query;
@@ -226,8 +226,9 @@ namespace QuaryChain
         /// <returns>return number of row affected</returns>
         public int ExecuteQuery()
         {
-            _dbConnection.Open();
+          
             SqlCommand cmd = GetSqlCommand();
+            _dbConnection.Open(cmd);
             int recordsAffected = cmd.ExecuteNonQuery();
             _dbConnection.Close();
             return recordsAffected;
@@ -287,7 +288,7 @@ namespace QuaryChain
 
         private SqlCommand GetSqlCommand()
         {
-            SqlCommand cmd = new SqlCommand(GetFinalQuery(), _dbConnection);
+            SqlCommand cmd = new SqlCommand(GetFinalQuery(), _dbConnection.Connection);
             cmd.Parameters.AddRange(_paramaters.ToArray());
             return cmd;
         }

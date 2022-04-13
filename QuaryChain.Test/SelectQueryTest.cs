@@ -59,17 +59,27 @@ namespace QuaryChain.Test
         }
 
         [Test]
-        public void Transaction()
+        public void TransactionRollback()
         {
-          //SqlTransaction transaction = _db.Connection.BeginTransaction();
-          //  int count = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-          //       .AddParameter("@DbId", "DB01").AsExecuteQuery().ExecuteQuery();
-          //  int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-          //       .AddParameter("@DbId", "DEPLOY").AsExecuteQuery().ExecuteQuery();
-          //  transaction.Rollback();
-          //  Assert.IsTrue(1 == 1);
+             _db.BeginTransaction();
+            int count = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
+                 .AddParameter("@DbId", "DB01").ExecuteQuery();
+            int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
+                 .AddParameter("@DbId", "DEPLOY").ExecuteQuery();
+            _db.RollbackTransaction();
+            Assert.IsTrue(count==1 && count2==1);
         }
-
+        [Test]
+        public void TransactionCommit()
+        {
+            _db.BeginTransaction();
+            int count = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
+                 .AddParameter("@DbId", "DB01").ExecuteQuery();
+            int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
+                 .AddParameter("@DbId", "DEPLOY").ExecuteQuery();
+            _db.RollbackTransaction();
+            Assert.IsTrue(count == 1 && count2 == 1);
+        }
 
         private class ClpDatabases
         {
