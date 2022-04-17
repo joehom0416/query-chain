@@ -1,8 +1,11 @@
 using NUnit.Framework;
 using QuaryChain;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace QuaryChain.Test
@@ -100,6 +103,30 @@ namespace QuaryChain.Test
                  .AddParameter("@DbId", "DEPLOY").ExecuteQueryAsync();
             _db.RollbackTransaction();
             Assert.IsTrue(count == 1 && count2 == 1);
+        }
+
+        [Test]
+        public async Task CancelToken()
+        {
+            CancellationTokenSource source  = new CancellationTokenSource();
+            source.CancelAfter(2000);// give up after 2 seconds
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            try
+            {
+                await _db.CreateQuery("WAITFOR DELAY '00:00:30'").ExecuteQueryAsync(source.Token);
+            }catch(System.Data.SqlClient.SqlException ex)
+            {
+                // cancellation will throw exception, catch it here
+            }
+            finally
+            {
+                stopWatch.Stop();
+            }
+           
+            
+            TimeSpan ts =stopWatch.Elapsed;
+            Assert.IsTrue(ts.Seconds<30);
         }
 
         private class ClpDatabases

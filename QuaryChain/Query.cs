@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace QuaryChain
@@ -238,13 +239,18 @@ namespace QuaryChain
         /// Execute Non query with asynchronous method
         /// </summary>
         /// <returns>returns number of row affected</returns>
-        public async Task<int> ExecuteQueryAsync()
+        public async Task<int> ExecuteQueryAsync(CancellationToken token)
         {
             SqlCommand cmd= GetSqlCommand();
-             await _dbConnection.OpenAsync(cmd);
-             int recordsAffected =  await cmd.ExecuteNonQueryAsync();
+             await _dbConnection.OpenAsync(cmd, token);
+
+            int recordsAffected = await cmd.ExecuteNonQueryAsync(token);
             _dbConnection.Close();
             return recordsAffected;
+        }
+        public async Task<int> ExecuteQueryAsync()
+        {
+            return await ExecuteQueryAsync(CancellationToken.None);
         }
         #endregion
 

@@ -4,6 +4,7 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace QuaryChain
 {
@@ -18,7 +19,6 @@ namespace QuaryChain
         private  SqlTransaction _transaction;
         private  bool _transactionMode;
         public  SqlConnection Connection { get { return _dbConnection; } }
-
         public QueryConnection(SqlConnectionStringBuilder builder)
         {
             _dbConnection = new SqlConnection(builder.ConnectionString);
@@ -45,13 +45,8 @@ namespace QuaryChain
             Close();
             return this;
         }
-        /// <summary>
-        /// Open Connection 
-        /// </summary>
-        public void Open()
-        {
-            Open(null);
-        }
+      
+       
         /// <summary>
         /// Open Connection 
         /// </summary>
@@ -74,13 +69,23 @@ namespace QuaryChain
            
         }
         /// <summary>
+        /// Open Connection 
+        /// </summary>
+        public void Open()
+        {
+            Open(null);
+        }
+
+
+        /// <summary>
         /// Open database connection with asynchronous method
         /// </summary>
         /// <param name="cmd">command object</param>
-        public async Task OpenAsync(SqlCommand cmd)
+        public async Task OpenAsync(SqlCommand cmd, CancellationToken cancellationToken)
         {
-            if(_dbConnection.State!=ConnectionState.Open)
-               await _dbConnection.OpenAsync();
+            if (_dbConnection.State != ConnectionState.Open)
+                await _dbConnection.OpenAsync(cancellationToken);
+            
             if (cmd!= null && _transactionMode)
             {
                 if (_transaction == null)
@@ -90,6 +95,16 @@ namespace QuaryChain
                 cmd.Transaction = _transaction;
             }
         }
+        public async Task OpenAsync(SqlCommand cmd)
+        {
+            await OpenAsync(cmd, CancellationToken.None);
+        }
+
+        public async Task OpenAsync()
+        {
+            await OpenAsync(null);
+        }
+
         /// <summary>
         /// Close Connection
         /// </summary>
