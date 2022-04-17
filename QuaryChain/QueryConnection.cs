@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
+
 namespace QuaryChain
 {
     /// <summary>
@@ -64,12 +66,29 @@ namespace QuaryChain
             {
                 if(_transaction == null)
                 {
-                    _transaction = _dbConnection.BeginTransaction();
+                    _transaction = _dbConnection.BeginTransaction(Guid.NewGuid().ToString().Substring(0, 31));
                 }
                
                 cmd.Transaction = _transaction;
             }
            
+        }
+        /// <summary>
+        /// Open database connection with asynchronous method
+        /// </summary>
+        /// <param name="cmd">command object</param>
+        public async Task OpenAsync(SqlCommand cmd)
+        {
+            if(_dbConnection.State!=ConnectionState.Open)
+               await _dbConnection.OpenAsync();
+            if (cmd!= null && _transactionMode)
+            {
+                if (_transaction == null)
+                {
+                    _transaction = await Task.Run<SqlTransaction>(() => _dbConnection.BeginTransaction(Guid.NewGuid().ToString().Substring(0,31)));
+                }
+                cmd.Transaction = _transaction;
+            }
         }
         /// <summary>
         /// Close Connection

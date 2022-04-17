@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace QuaryChain
 {
@@ -221,7 +222,7 @@ namespace QuaryChain
 
         #region non query
         /// <summary>
-        /// Execute Query
+        /// Execute Non Query
         /// </summary>
         /// <returns>return number of row affected</returns>
         public int ExecuteQuery()
@@ -233,12 +234,24 @@ namespace QuaryChain
             _dbConnection.Close();
             return recordsAffected;
         }
+        /// <summary>
+        /// Execute Non query with asynchronous method
+        /// </summary>
+        /// <returns>returns number of row affected</returns>
+        public async Task<int> ExecuteQueryAsync()
+        {
+            SqlCommand cmd= GetSqlCommand();
+             await _dbConnection.OpenAsync(cmd);
+             int recordsAffected =  await cmd.ExecuteNonQueryAsync();
+            _dbConnection.Close();
+            return recordsAffected;
+        }
         #endregion
 
         /// <summary>
         /// Replace SQL parameters from @RefType to @RefType0,@RefType1
         /// </summary>
-        /// <returns>Returns replace query in String</returns>
+        /// <returns>returns replace query in String</returns>
         private string GetFinalQuery()
         {
             string queryReplace = _query +"";
@@ -285,7 +298,10 @@ namespace QuaryChain
                 throw new NotSupportedException(value.GetType().FullName + " not supported, please use Type Conversion extension function like Enum.ToEnumValue to pass in value");
         }
 
-
+        /// <summary>
+        ///  create command object and process parameters
+        /// </summary>
+        /// <returns>Returns SqlCommand</returns>
         private SqlCommand GetSqlCommand()
         {
             SqlCommand cmd = new SqlCommand(GetFinalQuery(), _dbConnection.Connection);

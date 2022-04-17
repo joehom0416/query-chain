@@ -3,6 +3,7 @@ using QuaryChain;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace QuaryChain.Test
 {
@@ -77,6 +78,26 @@ namespace QuaryChain.Test
                  .AddParameter("@DbId", "DB01").ExecuteQuery();
             int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
                  .AddParameter("@DbId", "DEPLOY").ExecuteQuery();
+            _db.RollbackTransaction();
+            Assert.IsTrue(count == 1 && count2 == 1);
+        }
+
+
+        [Test]
+        public async Task UpdateSetatmentAsync()
+        {
+            int count = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
+                 .AddParameter("@DbId", "DB01").ExecuteQueryAsync();
+            Assert.IsTrue(count > 0);
+        }
+        [Test]
+        public async Task TransactionCommitAsync()
+        {
+            _db.BeginTransaction();
+            int count = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
+                 .AddParameter("@DbId", "DB01").ExecuteQueryAsync();
+            int count2 = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
+                 .AddParameter("@DbId", "DEPLOY").ExecuteQueryAsync();
             _db.RollbackTransaction();
             Assert.IsTrue(count == 1 && count2 == 1);
         }
