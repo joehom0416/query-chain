@@ -59,3 +59,29 @@ Add Output Direction Parameter.
 ```csharp
 _db.CreateStoredProcedure("GetCourseExamId").AddOutputParameter("@output", DbType.String)
 ```
+
+# Result
+The Query-Chain provided several return type.
+
+### GetDataTable
+Returns DataTable
+```csharp
+
+DataTable dt=  _db
+                .CreateQuery("SELECT * FROM Students WHERE Year=@Year")
+                .AddParameter("@Year", 2021, DbType.Int)
+                .GetDataTable();  
+
+ DataTable dt = _db.CreateStoredProcedure("GetStudentList").AddParameter("@Year", 2021).GetDataTable();
+```
+
+
+### GetCustomCollection and GetCustomCollectionAsync
+Returns list of custom models
+```csharp
+
+IList<StudentModel> list = _db.CreateQuery("SELECT * FROM Students").GetCustomCollection<StudentModel>();
+           
+IList<StudentModel> list2 = _db.CreateStoredProcedure("GetStudentList").GetCustomCollection<StudentModel>();
+```
+
