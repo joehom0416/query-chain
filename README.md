@@ -1,5 +1,5 @@
 # query-chain
-query-chain is a lightweight fuent api data access library that build on top of ADO.NET.
+query-chain is a lightweight fluent api data access library that build on top of ADO.NET.
 
 
 # Initialising connection
