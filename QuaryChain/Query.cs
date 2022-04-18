@@ -179,6 +179,36 @@ namespace QuaryChain
 
         }
         /// <summary>
+        /// Get Custom Collection
+        /// </summary>
+        /// <typeparam name="T">Model Type</typeparam>
+        /// <returns>Returns list of models</returns>
+        public async Task<IList<T>> GetCustomCollectionAsync<T>() where T : class, new()
+        {
+            IList<T> result = new List<T>();
+            await _dbConnection.OpenAsync();
+            SqlDataReader reader =await GetSqlCommand().ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                T item = ConvertToObject<T>(reader);
+                result.Add(item);
+            }
+            reader.Close();
+            _dbConnection.Close();
+            return result;
+
+        }
+        /// <summary>
+        ///  Executes the query, and returns the first column of the first row in the result
+        ///    set returned by the query. Additional columns or rows are ignored.
+        /// </summary>
+        /// <returns>The first column of the first row in the result set, or a null reference (Nothing in Visual Basic) if the result set is empty. Returns a maximum of 2033 characters.</returns>
+        public T ExecuteScalar<T>()
+        {
+            _dbConnection.Close();
+            return (T)ExecuteScalar();
+        }
+        /// <summary>
         ///  Executes the query, and returns the first column of the first row in the result
         ///    set returned by the query. Additional columns or rows are ignored.
         /// </summary>

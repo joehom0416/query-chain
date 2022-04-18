@@ -55,6 +55,14 @@ namespace QuaryChain.Test
         }
 
         [Test]
+        public async Task GetCustomCollectionAsync()
+        {
+            IList<ClpDatabases> list = await _db.CreateQuery("SELECT * FROM ClpDatabases").GetCustomCollectionAsync<ClpDatabases>();
+            Assert.IsTrue(list.Count > 0);
+
+        }
+
+        [Test]
         public void UpdateSetatment()
         {
            int count= _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
@@ -127,6 +135,28 @@ namespace QuaryChain.Test
             
             TimeSpan ts =stopWatch.Elapsed;
             Assert.IsTrue(ts.Seconds<30);
+        }
+
+
+        [Test]
+        public void HasRecords()
+        {
+            bool result =_db.HasRecords("ClpDatabases", "1=1");
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void GetDbValue()
+        {
+            string result = (string) _db.GetDbValue("DbType","ClpDatabases", "DbId='DB01'");
+            Assert.IsTrue(result=="L");
+        }
+
+        [Test]
+        public void GetScheme()
+        {
+            DataTable result = _db.GetScheme("Tables", null);
+            Assert.IsTrue(result.Rows.Count>0);
         }
 
         private class ClpDatabases
