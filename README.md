@@ -81,7 +81,33 @@ Returns list of custom models
 ```csharp
 
 IList<StudentModel> list = _db.CreateQuery("SELECT * FROM Students").GetCustomCollection<StudentModel>();
+IList<StudentModel> list3 = await _db.CreateQuery("SELECT * FROM Students").GetCustomCollectionAsync<StudentModel>();
            
 IList<StudentModel> list2 = _db.CreateStoredProcedure("GetStudentList").GetCustomCollection<StudentModel>();
+IList<StudentModel> list4 = await _db.CreateStoredProcedure("GetStudentList").GetCustomCollectionAsync<StudentModel>();
 ```
+
+### ExecuteNonQuery and ExecuteNonQueryAsync
+Same function with the ADO.Net ExecuteNonQuery
+```csharp
+  int recordAffected= _db.CreateQuery("UPDATE Courses SET [Description]='Bachelor of Arts' WHERE Id=@Id")
+                .AddParameter("@Id", "C01").ExecuteNonQuery();
+
+int recordAffected1= await _db.CreateQuery("UPDATE Courses SET [Description]='Bachelor of Arts' WHERE Id=@Id")
+                .AddParameter("@Id", "C01").ExecuteNonQueryAsync();
+```
+### ExecuteProcedure
+Designed for Stored Procedure, returns a dictionary consist of returnValue and output.
+```
+ Dictionary<string,dynamic>result=   _db.CreateStoredProcedure("GetTutorialClass")
+                .AddParameter("@course", "DIT")
+                .AddOutputParameter("@output", DbType.String)
+                .ExecuteProcedure();
+                
+    Dictionary<string, dynamic> result = _db.CreateStoredProcedure("GetRunningNumber")
+                    .AddReturnValueParameter("@return", DbType.Int64).ExecuteProcedure();             
+                
+```
+
+
 
