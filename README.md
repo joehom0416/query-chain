@@ -17,12 +17,12 @@ QueryConnection is the core component, you required this to create Query object.
 # Create Query Object 
 The QueryConnection provided 2 functions to create Query object. `CreateQuery` and `CreateStoredProcedure`, which indicate query and stored procudure.
 
-## CreateQuery
+### CreateQuery
 ```csharp
  _db.CreateQuery("SELECT * FROM Students WHERE StudentId=@StudentId")
 ```
 
-## CreateStoredProcedure
+### CreateStoredProcedure
 ```csharp
 _db.CreateStoredProcedure("GetStudent")
 ```
