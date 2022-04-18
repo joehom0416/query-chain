@@ -33,16 +33,7 @@ namespace QuaryChain
 
 
         #region Parameteres
-        /// <summary>
-        /// Add SQL Parameter object
-        /// </summary>
-        /// <param name="dbParameter">SQL parameter</param>
-        public Query AddParameter(SqlParameter dbParameter)
-        {
-            _paramaters.Add(dbParameter);
-            return this;
-     
-        }
+
         /// <summary>
         /// Add Parameter with ReturnValue Direction
         /// </summary>
