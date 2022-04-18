@@ -293,7 +293,7 @@ namespace QuaryChain
         /// Execute Non Query
         /// </summary>
         /// <returns>return number of row affected</returns>
-        public int ExecuteQuery()
+        public int ExecuteNonQuery()
         {
           
             SqlCommand cmd = GetSqlCommand();
@@ -306,7 +306,7 @@ namespace QuaryChain
         /// Execute Non query with asynchronous method
         /// </summary>
         /// <returns>returns number of row affected</returns>
-        public async Task<int> ExecuteQueryAsync(CancellationToken token)
+        public async Task<int> ExecuteNonQueryAsync(CancellationToken token)
         {
             SqlCommand cmd= GetSqlCommand();
              await _dbConnection.OpenAsync(cmd, token);
@@ -315,12 +315,12 @@ namespace QuaryChain
             _dbConnection.Close();
             return recordsAffected;
         }
-        public async Task<int> ExecuteQueryAsync()
+        public async Task<int> ExecuteNonQueryAsync()
         {
-            return await ExecuteQueryAsync(CancellationToken.None);
+            return await ExecuteNonQueryAsync(CancellationToken.None);
         }
         
-        public Dictionary<string,dynamic> ExecuteProcedureNonQuery()
+        public Dictionary<string,dynamic> ExecuteProcedure()
         {
             Dictionary<string, dynamic> result=new Dictionary<string, dynamic>();
             SqlCommand cmd = GetSqlCommand();

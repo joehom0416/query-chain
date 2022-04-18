@@ -66,7 +66,7 @@ namespace QuaryChain.Test
         public void UpdateSetatment()
         {
            int count= _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                .AddParameter("@DbId", "DB01").ExecuteQuery();
+                .AddParameter("@DbId", "DB01").ExecuteNonQuery();
             Assert.IsTrue(count > 0);
         }
 
@@ -75,9 +75,9 @@ namespace QuaryChain.Test
         {
              _db.BeginTransaction();
             int count = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DB01").ExecuteQuery();
+                 .AddParameter("@DbId", "DB01").ExecuteNonQuery();
             int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DEPLOY").ExecuteQuery();
+                 .AddParameter("@DbId", "DEPLOY").ExecuteNonQuery();
             _db.RollbackTransaction();
             Assert.IsTrue(count==1 && count2==1);
         }
@@ -86,9 +86,9 @@ namespace QuaryChain.Test
         {
             _db.BeginTransaction();
             int count = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DB01").ExecuteQuery();
+                 .AddParameter("@DbId", "DB01").ExecuteNonQuery();
             int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DEPLOY").ExecuteQuery();
+                 .AddParameter("@DbId", "DEPLOY").ExecuteNonQuery();
             _db.RollbackTransaction();
             Assert.IsTrue(count == 1 && count2 == 1);
         }
@@ -98,7 +98,7 @@ namespace QuaryChain.Test
         public async Task UpdateSetatmentAsync()
         {
             int count = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DB01").ExecuteQueryAsync();
+                 .AddParameter("@DbId", "DB01").ExecuteNonQueryAsync();
             Assert.IsTrue(count > 0);
         }
         [Test]
@@ -106,9 +106,9 @@ namespace QuaryChain.Test
         {
             _db.BeginTransaction();
             int count = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DB01").ExecuteQueryAsync();
+                 .AddParameter("@DbId", "DB01").ExecuteNonQueryAsync();
             int count2 = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DEPLOY").ExecuteQueryAsync();
+                 .AddParameter("@DbId", "DEPLOY").ExecuteNonQueryAsync();
             _db.RollbackTransaction();
             Assert.IsTrue(count == 1 && count2 == 1);
         }
@@ -122,7 +122,7 @@ namespace QuaryChain.Test
             stopWatch.Start();
             try
             {
-                await _db.CreateQuery("WAITFOR DELAY '00:00:30'").ExecuteQueryAsync(source.Token);
+                await _db.CreateQuery("WAITFOR DELAY '00:00:30'").ExecuteNonQueryAsync(source.Token);
             }catch(System.Data.SqlClient.SqlException ex)
             {
                 // cancellation will throw exception, catch it here
@@ -165,7 +165,7 @@ namespace QuaryChain.Test
         Dictionary<string,dynamic>result=   _db.CreateStoredProcedure("SpClpRootGroupGet")
                 .AddParameter("@orgCode", "ViewPoint")
                 .AddOutputParameter("@output", DbType.String)
-                .AddParameter("@userCode", "sm").ExecuteProcedureNonQuery();
+                .AddParameter("@userCode", "sm").ExecuteProcedure();
 
             Assert.IsTrue(! String.IsNullOrEmpty(result["@output"].ToString()));
         }
@@ -177,7 +177,7 @@ namespace QuaryChain.Test
                     .AddParameter("@entCode", "GENERAL")
                     .AddParameter("@dType", "CPA")
                     .AddParameter("@mustbeNumeric", true)
-                    .AddReturnValueParameter("@return", DbType.Int64).ExecuteProcedureNonQuery();
+                    .AddReturnValueParameter("@return", DbType.Int64).ExecuteProcedure();
 
             Assert.IsTrue(((Int64)result["@return"]>0));
         }
