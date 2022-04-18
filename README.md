@@ -24,7 +24,7 @@ The QueryConnection provided 2 functions to create Query object. `CreateQuery` a
 
 ### CreateStoredProcedure
 ```csharp
-_db.CreateStoredProcedure("GetStudent")
+_db.CreateStoredProcedure("GetStudent");
 ```
 
 # Add Parameter
@@ -33,11 +33,11 @@ _db.CreateStoredProcedure("GetStudent")
 Add Input Direction Parameter.
 ```csharp
  _db.CreateQuery("SELECT * FROM Students WHERE StudentId=@StudentId")
-                .AddParameter("@StudentId", "0001")
+                .AddParameter("@StudentId", "0001");
                 
   _db.CreateStoredProcedure("GetStudent")
-                .AddParameter("@StudentId", "0001", DbType.Int)
-                .AddParameter("@Course", "DIT", DbType.String)
+                .AddParameter("@StudentId", "0001", DbType.String)
+                .AddParameter("@Course", "DIT", DbType.String);
 
 ```
 
@@ -45,6 +45,17 @@ Add Input Direction Parameter.
 This function provided dynamic parameters for SQL IN Operator.
 ```csharp
  string[] params = { "0001", "1001","1233", "8911" };
- _db.CreateQuery("SELECT * FROM Student WHERE StudentId IN(@StudentId)").AddParameters("StudentId", params, DbType.String)
+ _db.CreateQuery("SELECT * FROM Student WHERE StudentId IN(@StudentId)").AddParameters("StudentId", params, DbType.String);
 ```
 
+### AddReturnValueParameter
+Add ReturnValue Direction Parameter.
+```csharp
+_db.CreateStoredProcedure("GetNewStudentId").AddReturnValueParameter("@return", DbType.String)
+```
+
+### AddOutputParameter
+Add Output Direction Parameter.
+```csharp
+_db.CreateStoredProcedure("GetCourseExamId").AddOutputParameter("@output", DbType.String)
+```
