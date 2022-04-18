@@ -26,3 +26,15 @@ The QueryConnection provided 2 functions to create Query object. `CreateQuery` a
 ```csharp
 _db.CreateStoredProcedure("GetStudent")
 ```
+
+# Add Parameter
+
+```csharp
+ _db.CreateQuery("SELECT * FROM Students WHERE StudentId=@StudentId")
+                .AddParameter("@StudentId", "0001", DbType.String)
+                
+  _db.CreateStoredProcedure("GetStudent")
+                .AddParameter("@StudentId", "0001", DbType.Int)
+                .AddParameter("@Course", "DIT", DbType.String)
+
+```
