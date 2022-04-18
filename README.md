@@ -4,7 +4,7 @@ query-chain is a lightweight fuent api data access library that build on top of 
 
 # Initialising connection
 QueryConnection is the core component, you required this to create Query object.
-```c-sharp
+```csharp
 
   SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
             builder.DataSource = "127.0.0.1";
@@ -18,11 +18,11 @@ QueryConnection is the core component, you required this to create Query object.
 The QueryConnection provided 2 functions to create Query object. `CreateQuery` and `CreateStoredProcedure`, which indicate query and stored procudure.
 
 ## CreateQuery
-```c-sharp
+```csharp
  _db.CreateQuery("SELECT * FROM Students WHERE StudentId=@StudentId")
 ```
 
 ## CreateStoredProcedure
-```c-sharp
+```csharp
 _db.CreateStoredProcedure("GetStudent")
 ```
