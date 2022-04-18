@@ -159,6 +159,36 @@ namespace QuaryChain.Test
             Assert.IsTrue(result.Rows.Count>0);
         }
 
+        [Test]
+        public void CallStoredProcedureWithNonQuery_ReturnOutput()
+        {
+        Dictionary<string,dynamic>result=   _db.CreateStoredProcedure("SpClpRootGroupGet")
+                .AddParameter("@orgCode", "ViewPoint")
+                .AddOutputParameter("@output", DbType.String)
+                .AddParameter("@userCode", "sm").ExecuteProcedureNonQuery();
+
+            Assert.IsTrue(! String.IsNullOrEmpty(result["@output"].ToString()));
+        }
+
+        [Test]
+        public void CallStoredProcedureWithNonQuery_ReturnValue()
+        {
+            Dictionary<string, dynamic> result = _db.CreateStoredProcedure("SpDocNumGet")
+                    .AddParameter("@entCode", "GENERAL")
+                    .AddParameter("@dType", "CPA")
+                    .AddParameter("@mustbeNumeric", true)
+                    .AddReturnValueParameter("@return", DbType.Int64).ExecuteProcedureNonQuery();
+
+            Assert.IsTrue(((Int64)result["@return"]>0));
+        }
+
+        [Test]
+        public void CallStoredProcedureWithDataTable()
+        {
+            DataTable dt = _db.CreateStoredProcedure("SpClpMenusGet").AddParameter("@UserRole", "WM").GetDataTable();
+            Assert.IsTrue(dt.Rows.Count > 0);
+        }
+
         private class ClpDatabases
         {
             public string DbId { get; set; }

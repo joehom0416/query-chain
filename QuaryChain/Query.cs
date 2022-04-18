@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Linq;
 namespace QuaryChain
 {
     /// <summary>
@@ -19,12 +19,14 @@ namespace QuaryChain
         private readonly string _query;
         private readonly List<SqlParameter> _paramaters;
         private readonly Dictionary<string, string> _parametersReplace;
-        public Query(QueryConnection dbConnection, string query)
+        private readonly CommandType _cmdType;
+        public Query(QueryConnection dbConnection, string query, CommandType cmdType  )
         {
             _dbConnection = dbConnection;
             _query = query;
             _paramaters=new List<SqlParameter>();
             _parametersReplace=new Dictionary<string, string>();
+            _cmdType = cmdType;
         }
 
 
@@ -32,13 +34,45 @@ namespace QuaryChain
 
         #region Parameteres
         /// <summary>
+        /// Add SQL Parameter object
+        /// </summary>
+        /// <param name="dbParameter">SQL parameter</param>
+        public Query AddParameter(SqlParameter dbParameter)
+        {
+            _paramaters.Add(dbParameter);
+            return this;
+     
+        }
+        /// <summary>
+        /// Add Parameter with ReturnValue Direction
+        /// </summary>
+        /// <param name="parameterName">parameter name</param>
+        /// <param name="dbType">database type</param>
+        /// <returns></returns>
+        public Query AddReturnValueParameter(string parameterName, DbType dbType)
+        {
+            return AddParameter(parameterName, DBNull.Value, dbType, ParameterDirection.ReturnValue);
+        }
+
+        /// <summary>
+        /// Add Parameter with Output Direction
+        /// </summary>
+        /// <param name="parameterName">parameter name</param>
+        /// <param name="dbType">database type</param>
+        /// <returns></returns>
+        public Query AddOutputParameter(string parameterName, DbType dbType)
+        {
+            return AddParameter(parameterName, DBNull.Value, dbType, ParameterDirection.Output);
+        }
+
+        /// <summary>
         /// Adds a System.Data.Common.DbParameter item with the specified value to the System.Data.Common.DbParameterCollection.
         ///</summary>
         ///<param name="parameterName">parameter name</param>
         ///<param name="value">value</param>
         ///<param name="dbType">database type</param>
-        ///<remarks></remarks>
-        public Query AddParameter(string parameterName, object value, DbType dbType)
+        ///<param name="parameterDirection">Specifies the type of a parameter within a query relative to the System.Data.DataSet</param>
+        public Query AddParameter(string parameterName, object value, DbType dbType, ParameterDirection parameterDirection)
         {
 
 #if DEBUG
@@ -47,6 +81,7 @@ namespace QuaryChain
             SqlParameter dbParameter = new SqlParameter();
             dbParameter.ParameterName = parameterName;
             dbParameter.DbType = dbType;
+            dbParameter.Direction = parameterDirection;
             if ((dbType == DbType.DateTime || dbType == DbType.Date) && !string.IsNullOrEmpty(value + ""))
             {
                 DateTime dateTimeValue = DateTime.Parse((string)value);
@@ -56,6 +91,17 @@ namespace QuaryChain
                 dbParameter.Value = value;
             _paramaters.Add(dbParameter);
             return this;
+        }
+        /// <summary>
+        /// Adds a System.Data.Common.DbParameter item with the specified value to the System.Data.Common.DbParameterCollection.
+        ///</summary>
+        ///<param name="parameterName">parameter name</param>
+        ///<param name="value">value</param>
+        ///<param name="dbType">database type</param>
+        ///<remarks></remarks>
+        public Query AddParameter(string parameterName, object value, DbType dbType)
+        {
+            return AddParameter(parameterName, value, dbType, ParameterDirection.Input);
         }
         public Query AddParameter(string parameterName, bool value)
         {
@@ -282,6 +328,21 @@ namespace QuaryChain
         {
             return await ExecuteQueryAsync(CancellationToken.None);
         }
+        
+        public Dictionary<string,dynamic> ExecuteProcedureNonQuery()
+        {
+            Dictionary<string, dynamic> result=new Dictionary<string, dynamic>();
+            SqlCommand cmd = GetSqlCommand();
+            _dbConnection.Open(cmd);
+             cmd.ExecuteNonQuery();
+            _dbConnection.Close();
+            foreach(SqlParameter p in _paramaters.Where(c => c.Direction != ParameterDirection.Input))
+            {
+                result.Add(p.ParameterName, p.Value);
+            }
+
+            return result;
+        }
         #endregion
 
         /// <summary>
@@ -341,6 +402,7 @@ namespace QuaryChain
         private SqlCommand GetSqlCommand()
         {
             SqlCommand cmd = new SqlCommand(GetFinalQuery(), _dbConnection.Connection);
+                cmd.CommandType = _cmdType;
             cmd.Parameters.AddRange(_paramaters.ToArray());
             return cmd;
         }

@@ -124,7 +124,16 @@ namespace QuaryChain
         /// <returns></returns>
         public Query CreateQuery(string query)
         {
-            return new Query(this,query);
+            return new Query(this,query, CommandType.Text);
+        }
+        /// <summary>
+        /// Create Stored Procedure query
+        /// </summary>
+        /// <param name="storedProc">Stored Procedure Name</param>
+        /// <returns></returns>
+        public Query CreateStoredProcedure(string storedProc)
+        {
+            return new Query(this, storedProc, CommandType.StoredProcedure);
         }
 
 
