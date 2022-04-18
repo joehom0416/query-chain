@@ -98,7 +98,7 @@ int recordAffected1= await _db.CreateQuery("UPDATE Courses SET [Description]='Ba
 ```
 ### ExecuteProcedure
 Designed for Stored Procedure, returns a dictionary consist of returnValue and output.
-```
+```csharp
  Dictionary<string,dynamic>result=   _db.CreateStoredProcedure("GetTutorialClass")
                 .AddParameter("@course", "DIT")
                 .AddOutputParameter("@output", DbType.String)
