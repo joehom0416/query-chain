@@ -125,6 +125,26 @@ Designed for Stored Procedure, returns a dictionary consist of returnValue and o
                 
 ```
 
+### Async with Cancellation Token
+All async method accept cancellation token.
+```csharp
+CancellationTokenSource source  = new CancellationTokenSource();
+            source.CancelAfter(2000);// give up after 2 seconds
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            try
+            {
+                await _db.CreateQuery("WAITFOR DELAY '00:00:30'").ExecuteNonQueryAsync(source.Token);
+            }catch(System.Data.SqlClient.SqlException ex)
+            {
+                // cancellation will throw exception, catch it here
+            }
+            finally
+            {
+                stopWatch.Stop();
+            }
+```
+
 
 # Local Transaction
 Work as Transaction in ADO.Net, used to bind multiple tasks together so that execute as a single unit of work. It similar to ADO.Net, you required to call `BeginTransaction()` method from QueryConnection Object. Once you have begun a transaction, you can perform any execution and called `CommitTransaction()` to commit your sql command to database or call `RollbackTransaction()` to Rollback your sql command. 
