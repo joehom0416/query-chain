@@ -132,7 +132,7 @@ Designed for Stored Procedure, returns a dictionary consist of returnValue and o
 ```
 
 ### Async with Cancellation Token
-All async method accept cancellation token.
+you can pass in the cancellation token to all async methods.
 ```csharp
 CancellationTokenSource source  = new CancellationTokenSource();
             source.CancelAfter(2000);// give up after 2 seconds
