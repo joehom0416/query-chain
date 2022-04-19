@@ -111,7 +111,7 @@ Designed for Stored Procedure, returns a dictionary consist of returnValue and o
 
 
 # Local Transaction
-Work as Transaction in ADO.Net, it used to bind multiple tasks together so that execute as a single unit of work. It similar to ADO.Net, you required to call `BeginTransaction()` method from QueryConnection Object. Once you have begun a transaction, you can perform any execution and called `CommitTransaction` to commit your sql command to database or call `RollbackTransaction` to Rollback your sql command. 
+Work as Transaction in ADO.Net, used to bind multiple tasks together so that execute as a single unit of work. It similar to ADO.Net, you required to call `BeginTransaction()` method from QueryConnection Object. Once you have begun a transaction, you can perform any execution and called `CommitTransaction` to commit your sql command to database or call `RollbackTransaction` to Rollback your sql command. 
 ```csharp
    _db.BeginTransaction();
             try
