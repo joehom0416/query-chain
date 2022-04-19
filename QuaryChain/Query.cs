@@ -19,17 +19,16 @@ namespace QuaryChain
         private readonly List<SqlParameter> _paramaters;
         private readonly Dictionary<string, string> _parametersReplace;
         private readonly CommandType _cmdType;
-        public Query(QueryConnection dbConnection, string query, CommandType cmdType  )
+        private readonly DbType[] _supportedDbTypes;
+        public Query(QueryConnection dbConnection, string query, CommandType cmdType, DbType[] supportedDbType)
         {
             _dbConnection = dbConnection;
             _query = query;
             _paramaters=new List<SqlParameter>();
             _parametersReplace=new Dictionary<string, string>();
             _cmdType = cmdType;
+            _supportedDbTypes = supportedDbType;
         }
-
-
-
 
         #region Parameteres
 
@@ -66,7 +65,10 @@ namespace QuaryChain
         {
 
 #if DEBUG
-            ValidateAddParameter(dbType, value);
+            // Validate use only DbType allow
+            if (_supportedDbTypes.Length > 0 && !_supportedDbTypes.Contains(dbType))
+                throw new NotSupportedException(dbType.ToString() + $" not supported, please use supported DbType: {string.Join(",", _supportedDbTypes)}");
+
 #endif
             SqlParameter dbParameter = new SqlParameter();
             dbParameter.ParameterName = parameterName;
@@ -305,41 +307,6 @@ namespace QuaryChain
             return  queryReplace;
         }
 
-        /// <summary>
-        ///  Throw error when use invalid DbType
-        ///  </summary>
-        /// <param name="type"></param>
-        private void ValidateAddParameter(DbType type, object value)
-        {
-            // Validate use only DbType allow
-            switch (type)
-            {
-                case  DbType.String:
-                case  DbType.Boolean:
-                case  DbType.Byte:
-                case  DbType.Int16:
-                case  DbType.Int32:
-                case  DbType.Int64:
-                case  DbType.Double:
-                case  DbType.Decimal:
-                case  DbType.DateTime:
-                case  DbType.Date:
-                    {
-                        break;
-                    }
-
-                default:
-                    {
-                        // To: Developer, please only use DbType supported in Viewpoint Database Type
-                        throw new NotSupportedException(type.ToString() + " not supported, please use DbType supported in Viewpoint Database Type");
-                    }
-            }
-
-            // Validate use General .NET Framework Type
-            if (value != null && !value.GetType().FullName.StartsWith("System."))
-                // To: Developer, ENUM value is not accepted, require to use Conversion function like CInt to convert to General .NET Data Type
-                throw new NotSupportedException(value.GetType().FullName + " not supported, please use Type Conversion extension function like Enum.ToEnumValue to pass in value");
-        }
 
         /// <summary>
         ///  create command object and process parameters

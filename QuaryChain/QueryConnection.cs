@@ -18,10 +18,18 @@ namespace QuaryChain
         private readonly SqlConnection _dbConnection;
         private  SqlTransaction _transaction;
         private  bool _transactionMode;
+        private DbType[] _supportedDbTypes;
         public  SqlConnection Connection { get { return _dbConnection; } }
         public QueryConnection(SqlConnectionStringBuilder builder)
         {
             _dbConnection = new SqlConnection(builder.ConnectionString);
+            _supportedDbTypes =new DbType[0];
+        }
+
+        
+        public void SetSupportedDbType(params DbType[] dbTypes)
+        {
+            _supportedDbTypes = dbTypes;
         }
 
         public QueryConnection BeginTransaction()
@@ -124,7 +132,7 @@ namespace QuaryChain
         /// <returns></returns>
         public Query CreateQuery(string query)
         {
-            return new Query(this,query, CommandType.Text);
+            return new Query(this,query, CommandType.Text, _supportedDbTypes);
         }
         /// <summary>
         /// Create Stored Procedure query
@@ -133,7 +141,7 @@ namespace QuaryChain
         /// <returns></returns>
         public Query CreateStoredProcedure(string storedProc)
         {
-            return new Query(this, storedProc, CommandType.StoredProcedure);
+            return new Query(this, storedProc, CommandType.StoredProcedure, _supportedDbTypes);
         }
 
 

@@ -23,6 +23,16 @@ namespace QuaryChain.Test
             builder.UserID = "sa";
             builder.Password = "145837";
             _db = new QueryConnection(builder);
+            _db.SetSupportedDbType(DbType.String,
+                DbType.Boolean,
+                DbType.Byte,
+                DbType.Int16,
+                DbType.Int32,
+                DbType.Int64,
+                DbType.Double,
+                DbType.Decimal,
+                DbType.DateTime,
+                DbType.Date);
         }
 
         [Test]
@@ -33,6 +43,16 @@ namespace QuaryChain.Test
                 .AddParameter("@DbId", "DB01", DbType.String)
                 .GetDataTable();  
           Assert.IsTrue(dt.Rows.Count> 0);
+        }
+
+        [Test]
+        public void GetDataTable_EnumParameter()
+        {
+            DataTable dt = _db
+                  .CreateQuery("SELECT * FROM ClpDatabases WHERE RecStatus=@RecStatus")
+                  .AddParameter("@RecStatus", (int)RecStatus.Active)
+                  .GetDataTable();
+            Assert.IsTrue(dt.Rows.Count > 0);
         }
 
         [Test]
@@ -199,5 +219,10 @@ namespace QuaryChain.Test
             public int port { get; set; }
         }
 
+        private enum RecStatus
+        {
+            Inactive=0,
+            Active=1
+        }
     }
 }
