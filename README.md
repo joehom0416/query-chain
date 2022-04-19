@@ -1,5 +1,5 @@
 # query-chain
-query-chain is a lightweight fluent api data access library that build on top of ADO.NET.
+query-chain is a lightweight fluent api data access library that build on top of ADO.NET. 
 
 
 # Initialising connection
@@ -60,8 +60,8 @@ Add Output Direction Parameter.
 _db.CreateStoredProcedure("GetCourseExamId").AddOutputParameter("@output", DbType.String)
 ```
 
-# Result
-The Query-Chain provided several return type.
+# SQL Result
+The Query-Chain provided several methods to get different result from sql server database.
 
 ### GetDataTable
 Returns DataTable
@@ -110,4 +110,21 @@ Designed for Stored Procedure, returns a dictionary consist of returnValue and o
 ```
 
 
+# Local Transaction
+Work as Transaction in ADO.Net, it used to bind multiple tasks together so that execute as a single unit of work. It similar to ADO.Net, you required to call `BeginTransaction()` method from QueryConnection Object. Once you have begun a transaction, you can perform any execution and called `CommitTransaction` to commit your sql command to database or call `RollbackTransaction` to Rollback your sql command. 
+```csharp
+   _db.BeginTransaction();
+            try
+            {
+                int count = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
+                 .AddParameter("@DbId", "DB01").ExecuteNonQuery();
+                int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
+                     .AddParameter("@DbId", "DEPLOY").ExecuteNonQuery();
+                _db.CommitTransaction();
+            }
+            catch(SqlException ex)
+            {
+                _db.RollbackTransaction();
+            }
 
+```
