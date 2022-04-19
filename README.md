@@ -1,5 +1,5 @@
 # query-chain
-query-chain is a lightweight fluent api data access library that build on top of ADO.NET. 
+query-chain is a lightweight fluent api data access library for SQL server. Fluent API is based on a Fluent API design pattern ( a.k.a Fluent Interface) where the result is formulated by method chaining.
 
 
 # Initialising connection
