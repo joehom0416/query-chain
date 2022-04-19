@@ -103,6 +103,12 @@ IList<StudentModel> list2 = _db.CreateStoredProcedure("GetStudentList").GetCusto
 IList<StudentModel> list4 = await _db.CreateStoredProcedure("GetStudentList").GetCustomCollectionAsync<StudentModel>();
 ```
 
+### ExecuteScalar
+same function with the ADO.Net ExecuteScalar
+```csharp
+ int count = _db.CreateQuery("SELECT COUNT(*) FROM ClpDatabases").ExecuteScalar<int>();
+```
+
 ### ExecuteNonQuery and ExecuteNonQueryAsync
 Same function with the ADO.Net ExecuteNonQuery
 ```csharp
