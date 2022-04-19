@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 
-namespace QuaryChain
+namespace QuaryChain.Extensions
 {
     public static class QueryConnectionExtension
     {

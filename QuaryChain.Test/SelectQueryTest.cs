@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using QuaryChain;
+using QuaryChain.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data;

@@ -7,11 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 namespace QuaryChain
 {
     /// <summary>
-    /// Handle query, parameters
+    /// query object, handle query and parameters
     /// </summary>
     public class Query
     {
@@ -83,62 +82,18 @@ namespace QuaryChain
             _paramaters.Add(dbParameter);
             return this;
         }
+
         /// <summary>
         /// Adds a System.Data.Common.DbParameter item with the specified value to the System.Data.Common.DbParameterCollection.
         ///</summary>
         ///<param name="parameterName">parameter name</param>
         ///<param name="value">value</param>
         ///<param name="dbType">database type</param>
-        ///<remarks></remarks>
-        public Query AddParameter(string parameterName, object value, DbType dbType)
+        public  Query AddParameter(string parameterName, object value, DbType dbType)
         {
             return AddParameter(parameterName, value, dbType, ParameterDirection.Input);
         }
-        public Query AddParameter(string parameterName, bool value)
-        {
-            return AddParameter(parameterName, value, DbType.Boolean);
-        }
-
-        public Query AddParameter(string parameterName, DateTime value)
-        {
-            return AddParameter(parameterName, value, DbType.DateTime);
-        }
-
-        public Query AddParameter(string parameterName, DBNull value)
-        {
-            return AddParameter(parameterName, "", DbType.String);
-        }
-
-        public Query AddParameter(string parameterName, Decimal value)
-        {
-            return AddParameter(parameterName, value, DbType.Decimal);
-        }
-
-        public Query AddParameter(string parameterName, Double value)
-        {
-            return AddParameter(parameterName, value, DbType.Double);
-        }
-
-        public Query AddParameter(string parameterName, Int32 value)
-        {
-            return AddParameter(parameterName, value, DbType.Int32);
-        }
-
-        public Query AddParameter(string parameterName, Int64 value)
-        {
-            return AddParameter(parameterName, value, DbType.Int64);
-        }
-
-        public Query AddParameter(string parameterName, Int16 value)
-        {
-            return AddParameter(parameterName, value, DbType.Int16);
-        }
-
-        public Query AddParameter(string parameterName, string value)
-        {
-            return AddParameter(parameterName, value, DbType.String);
-        }
-
+        
         /// <summary>
         /// Add Parameters require in SQL Condition, for example SeqNr IN (15,16,17), pass in 15,16,17 in list
         /// </summary>
