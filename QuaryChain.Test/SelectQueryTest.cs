@@ -83,6 +83,12 @@ namespace QuaryChain.Test
         }
 
         [Test]
+        public void ExecuteScalar()
+        {
+            int count = _db.CreateQuery("SELECT COUNT(*) FROM ClpDatabases").ExecuteScalar<int>();
+            Assert.IsTrue(count > 0);
+        }
+        [Test]
         public void UpdateSetatment()
         {
            int count= _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
