@@ -14,6 +14,22 @@ QueryConnection is the core component, you required this to create Query object.
           QueryConnection db = new QueryConnection(builder);
 ```
 
+# Restrict DbType used in your database
+In some scenarios, you need to restrict your developers to use some DbTypes that your database supported, you can use `SetSupportedDbType()`.
+```csharp
+
+ _db.SetSupportedDbType(DbType.String,
+                DbType.Boolean,
+                DbType.Byte,
+                DbType.Int16,
+                DbType.Int32,
+                DbType.Int64,
+                DbType.Double,
+                DbType.Decimal,
+                DbType.DateTime,
+                DbType.Date);
+```
+
 # Create Query Object 
 The QueryConnection provided 2 functions to create Query object. `CreateQuery()` and `CreateStoredProcedure()`, which indicate query and stored procudure.
 
