@@ -14,6 +14,22 @@ QueryConnection is the core component, you required this to create Query object.
           QueryConnection db = new QueryConnection(builder);
 ```
 
+# Restrict DbType used in your database
+In some scenarios, you need to restrict your developers to use some DbTypes that your database supported, you can use `SetSupportedDbType()`.
+```csharp
+
+ _db.SetSupportedDbType(DbType.String,
+                DbType.Boolean,
+                DbType.Byte,
+                DbType.Int16,
+                DbType.Int32,
+                DbType.Int64,
+                DbType.Double,
+                DbType.Decimal,
+                DbType.DateTime,
+                DbType.Date);
+```
+
 # Create Query Object 
 The QueryConnection provided 2 functions to create Query object. `CreateQuery()` and `CreateStoredProcedure()`, which indicate query and stored procudure.
 
@@ -87,6 +103,12 @@ IList<StudentModel> list2 = _db.CreateStoredProcedure("GetStudentList").GetCusto
 IList<StudentModel> list4 = await _db.CreateStoredProcedure("GetStudentList").GetCustomCollectionAsync<StudentModel>();
 ```
 
+### ExecuteScalar
+same function with the ADO.Net ExecuteScalar
+```csharp
+ int count = _db.CreateQuery("SELECT COUNT(*) FROM ClpDatabases").ExecuteScalar<int>();
+```
+
 ### ExecuteNonQuery and ExecuteNonQueryAsync
 Same function with the ADO.Net ExecuteNonQuery
 ```csharp
@@ -107,6 +129,26 @@ Designed for Stored Procedure, returns a dictionary consist of returnValue and o
     Dictionary<string, dynamic> result = _db.CreateStoredProcedure("GetRunningNumber")
                     .AddReturnValueParameter("@return", DbType.Int64).ExecuteProcedure();             
                 
+```
+
+### Async with Cancellation Token
+you can pass in the cancellation token to all async methods.
+```csharp
+CancellationTokenSource source  = new CancellationTokenSource();
+            source.CancelAfter(2000);// give up after 2 seconds
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            try
+            {
+                await _db.CreateQuery("WAITFOR DELAY '00:00:30'").ExecuteNonQueryAsync(source.Token);
+            }catch(System.Data.SqlClient.SqlException ex)
+            {
+                // cancellation will throw exception, catch it here
+            }
+            finally
+            {
+                stopWatch.Stop();
+            }
 ```
 
 
