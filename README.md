@@ -76,6 +76,16 @@ Add Output Direction Parameter.
 _db.CreateStoredProcedure("GetCourseExamId").AddOutputParameter("@output", DbType.String)
 ```
 
+### ClearParameter
+Clear parameters
+```csharp
+
+Query q = _db.CreateQuery("SELECT * FROM ClpDatabases WHERE DbId=@DbId")
+                   .AddParameter("@DbId", "DB01", DbType.String);
+                   
+            q.ClearParameter().AddParameter("@DbId", "LOCAL", DbType.String); ;
+```
+
 # SQL Result
 The Query-Chain provided several methods to get different result from sql server database.
 
