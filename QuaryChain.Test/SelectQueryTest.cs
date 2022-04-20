@@ -46,6 +46,18 @@ namespace QuaryChain.Test
         }
 
         [Test]
+        public void GetDataTable_ClearParams()
+        {
+            Query q = _db
+                   .CreateQuery("SELECT * FROM ClpDatabases WHERE DbId=@DbId")
+                   .AddParameter("@DbId", "DB01", DbType.String);
+            q.ClearParameter().AddParameter("@DbId", "LOCAL", DbType.String); ;
+
+            DataTable dt = q.GetDataTable();
+            Assert.IsTrue(dt.Rows.Count > 0);
+        }
+
+        [Test]
         public void GetDataTable_EnumParameter()
         {
             DataTable dt = _db

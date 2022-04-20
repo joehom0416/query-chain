@@ -118,6 +118,17 @@ namespace QuaryChain
             _parametersReplace[parameterPrefix] = string.Join(",", listCollect) + "";
             return this;
         }
+
+        /// <summary>
+        /// clear all parameters
+        /// </summary>
+        /// <returns></returns>
+        public Query ClearParameter()
+        {
+            _paramaters.Clear();
+            _parametersReplace.Clear();
+            return this;
+        }
         #endregion
 
         #region query
