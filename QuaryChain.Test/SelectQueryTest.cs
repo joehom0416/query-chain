@@ -95,6 +95,21 @@ namespace QuaryChain.Test
         }
 
         [Test]
+        public void GetSingle()
+        {
+            ClpDatabases r =  _db.CreateQuery("SELECT * FROM ClpDatabases").GetSingle<ClpDatabases>();
+            Assert.IsTrue(r!=null);
+
+        }
+
+        [Test]
+        public async Task GetSingleAsync()
+        {
+            ClpDatabases r = await _db.CreateQuery("SELECT * FROM ClpDatabases").GetSingleAsync<ClpDatabases>();
+            Assert.IsTrue(r != null);
+
+        }
+        [Test]
         public void ExecuteScalar()
         {
             int count = _db.CreateQuery("SELECT COUNT(*) FROM ClpDatabases").ExecuteScalar<int>();

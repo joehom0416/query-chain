@@ -183,6 +183,7 @@ namespace QuaryChain
             return result;
 
         }
+  
         /// <summary>
         /// Get Custom Collection
         /// </summary>
@@ -203,6 +204,41 @@ namespace QuaryChain
             return result;
 
         }
+
+        /// <summary>
+        /// Get single record
+        /// </summary>
+        /// <typeparam name="T">Model Type</typeparam>
+        /// <returns>Returns single record</returns>
+        public T GetSingle<T>() where T : class, new()
+        {
+            _dbConnection.Open();
+            SqlDataReader reader = GetSqlCommand().ExecuteReader();
+            reader.Read();
+            T result = ConvertToObject<T>(reader);
+            reader.Close();
+            _dbConnection.Close();
+            return result;
+
+        }
+
+        /// <summary>
+        /// Get single record
+        /// </summary>
+        /// <typeparam name="T">Model Type</typeparam>
+        /// <returns>Returns single record</returns>
+        public async Task<T> GetSingleAsync<T>() where T : class, new()
+        {
+            await _dbConnection.OpenAsync();
+            SqlDataReader reader = await GetSqlCommand().ExecuteReaderAsync();
+           await reader.ReadAsync();
+            T result = ConvertToObject<T>(reader);
+            reader.Close();
+            _dbConnection.Close();
+            return result;
+
+        }
+
         /// <summary>
         ///  Executes the query, and returns the first column of the first row in the result
         ///    set returned by the query. Additional columns or rows are ignored.
