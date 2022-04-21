@@ -113,6 +113,15 @@ IList<StudentModel> list2 = _db.CreateStoredProcedure("GetStudentList").GetCusto
 IList<StudentModel> list4 = await _db.CreateStoredProcedure("GetStudentList").GetCustomCollectionAsync<StudentModel>();
 ```
 
+### GetSingle and GetSingleAsync
+Returns a custom models
+```csharp
+
+StudentModel result = _db.CreateQuery("SELECT * FROM Students WHERE StudentId=@StudentId").AddParameter("@StudentId", "0001").GetSingle<StudentModel>();
+StudentModel result2  = await _db.CreateQuery("SELECT * FROM Students WHERE StudentId=@StudentId").AddParameter("@StudentId", "0001").GetSingleAsync<StudentModel>();
+           
+
+```
 ### ExecuteScalar
 same function with the ADO.Net ExecuteScalar
 ```csharp
