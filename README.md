@@ -123,13 +123,11 @@ StudentModel result2  = await _db.CreateQuery("SELECT * FROM Students WHERE Stud
 
 ```
 ### ExecuteScalar
-same function with the ADO.Net ExecuteScalar
 ```csharp
  int count = _db.CreateQuery("SELECT COUNT(*) FROM ClpDatabases").ExecuteScalar<int>();
 ```
 
 ### ExecuteNonQuery and ExecuteNonQueryAsync
-Same function with the ADO.Net ExecuteNonQuery
 ```csharp
   int recordAffected= _db.CreateQuery("UPDATE Courses SET [Description]='Bachelor of Arts' WHERE Id=@Id")
                 .AddParameter("@Id", "C01").ExecuteNonQuery();
@@ -138,7 +136,7 @@ int recordAffected1= await _db.CreateQuery("UPDATE Courses SET [Description]='Ba
                 .AddParameter("@Id", "C01").ExecuteNonQueryAsync();
 ```
 ### ExecuteProcedure
-Designed for Stored Procedure, returns a dictionary consist of returnValue and output.
+Returns a dictionary consist of returnValue and output.
 ```csharp
  Dictionary<string,dynamic> result = _db.CreateStoredProcedure("GetTutorialClass")
                 .AddParameter("@course", "DIT")
