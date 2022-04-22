@@ -70,10 +70,10 @@ namespace QuaryChain.Test
         [Test]
         public void GetDataTableUsingIn()
         {
-            string[] param = { "DB01", "LOCAL" };
+
             DataTable dt = _db
                   .CreateQuery("SELECT * FROM ClpDatabases WHERE DbId IN(@DbId)")
-                  .AddParameters("@DbId", param, DbType.String).GetDataTable();
+                  .AddParameters("@DbId", new [] { "DB01", "LOCAL" }, DbType.String).GetDataTable();
             Assert.IsTrue(dt.Rows.Count > 0);
         }
 
