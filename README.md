@@ -12,6 +12,8 @@ QueryConnection is the core component, you required this to create Query object.
             builder.UserID = "sa";
             builder.Password = "12345";
           QueryConnection db = new QueryConnection(builder);
+          
+         QueryConnection db = new QueryConnection("Server=127.0.0.1;Database=db-2;User Id=sa;Password=12345;"); 
 ```
 
 # Restrict DbType used in your database
