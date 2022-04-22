@@ -60,8 +60,8 @@ Add Input Direction Parameter.
 ### AddParameters
 This function provided dynamic parameters for SQL IN Operator.
 ```csharp
- string[] params = { "0001", "1001","1233", "8911" };
- _db.CreateQuery("SELECT * FROM Student WHERE StudentId IN(@StudentId)").AddParameters("StudentId", params, DbType.String);
+ _db.CreateQuery("SELECT * FROM Student WHERE StudentId IN(@StudentId)")
+ .AddParameters("StudentId", new [] {"0001", "1001","1233", "8911"}, DbType.String);
 ```
 
 ### AddReturnValueParameter
