@@ -2,7 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPublishable>True</IsPublishable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Company>joehom</Company>
+    <Description>query-chain is a lightweight data access library for SQL server, it is based on a Fluent API design pattern ( a.k.a Fluent Interface) where the result is formulated by method chaining.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/joehom0416/query-chain</RepositoryUrl>
+    <PackageTags>adonet;sql-database;sql-client;netstandard</PackageTags>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FastMember" Version="1.5.0" />
