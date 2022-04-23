@@ -16,10 +16,10 @@ namespace QuaryChain.Test
        [SetUp]
         public void Setup()
         {
-            // string conn = "Server=127.0.0.1;Database=VP80xx;User Id=sa;Password=145837;";
+            //_db = new QueryConnection( "Server=127.0.0.1;Database=home-finance;User Id=sa;Password=145837;)";
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
             builder.DataSource = "127.0.0.1";
-            builder.InitialCatalog = "VP80xx";
+            builder.InitialCatalog = "home-finance";
             builder.UserID = "sa";
             builder.Password = "145837";
             _db = new QueryConnection(builder);
@@ -32,6 +32,7 @@ namespace QuaryChain.Test
                 DbType.Double,
                 DbType.Decimal,
                 DbType.DateTime,
+                DbType.Guid,
                 DbType.Date);
         }
 
@@ -39,8 +40,8 @@ namespace QuaryChain.Test
         public void GetDataTable()
         {               
           DataTable dt=  _db
-                .CreateQuery("SELECT * FROM ClpDatabases WHERE DbId=@DbId")
-                .AddParameter("@DbId", "DB01", DbType.String)
+                .CreateQuery("SELECT * FROM Transactions WHERE Category=@category")
+                .AddParameter("@category", "Beverage", DbType.String)
                 .GetDataTable();  
           Assert.IsTrue(dt.Rows.Count> 0);
         }
@@ -49,9 +50,9 @@ namespace QuaryChain.Test
         public void GetDataTable_ClearParams()
         {
             Query q = _db
-                   .CreateQuery("SELECT * FROM ClpDatabases WHERE DbId=@DbId")
-                   .AddParameter("@DbId", "DB01", DbType.String);
-            q.ClearParameter().AddParameter("@DbId", "LOCAL", DbType.String); ;
+                   .CreateQuery("SELECT * FROM Transactions WHERE Category=@category")
+                    .AddParameter("@category", "Beverage", DbType.String);
+            q.ClearParameter().AddParameter("@category", "Food", DbType.String);
 
             DataTable dt = q.GetDataTable();
             Assert.IsTrue(dt.Rows.Count > 0);
@@ -61,8 +62,8 @@ namespace QuaryChain.Test
         public void GetDataTable_EnumParameter()
         {
             DataTable dt = _db
-                  .CreateQuery("SELECT * FROM ClpDatabases WHERE RecStatus=@RecStatus")
-                  .AddParameter("@RecStatus", (int)RecStatus.Active)
+                  .CreateQuery("SELECT * FROM Transactions WHERE Category=@category")
+                  .AddParameter("@category", Category.Bill.ToString())
                   .GetDataTable();
             Assert.IsTrue(dt.Rows.Count > 0);
         }
@@ -72,8 +73,8 @@ namespace QuaryChain.Test
         {
 
             DataTable dt = _db
-                  .CreateQuery("SELECT * FROM ClpDatabases WHERE DbId IN(@DbId)")
-                  .AddParameters("@DbId", new [] { "DB01", "LOCAL" }, DbType.String).GetDataTable();
+                  .CreateQuery("SELECT * FROM Transactions WHERE Category IN (@category)")
+                  .AddParameters("@category", new [] { "Bill", "Transport", "Food" }, DbType.String).GetDataTable();
             Assert.IsTrue(dt.Rows.Count > 0);
         }
 
@@ -81,7 +82,7 @@ namespace QuaryChain.Test
         [Test]
         public void GetCustomCollection()
         {
-            IList<ClpDatabases> list = _db.CreateQuery("SELECT * FROM ClpDatabases").GetCustomCollection<ClpDatabases>();
+            IList<TransactionModel> list = _db.CreateQuery("SELECT * FROM Transactions").GetCustomCollection<TransactionModel>();
             Assert.IsTrue(list.Count >0);
 
         }
@@ -89,7 +90,7 @@ namespace QuaryChain.Test
         [Test]
         public async Task GetCustomCollectionAsync()
         {
-            IList<ClpDatabases> list = await _db.CreateQuery("SELECT * FROM ClpDatabases").GetCustomCollectionAsync<ClpDatabases>();
+            IList<TransactionModel> list = await _db.CreateQuery("SELECT * FROM Transactions").GetCustomCollectionAsync<TransactionModel>();
             Assert.IsTrue(list.Count > 0);
 
         }
@@ -97,7 +98,7 @@ namespace QuaryChain.Test
         [Test]
         public void GetSingle()
         {
-            ClpDatabases r =  _db.CreateQuery("SELECT * FROM ClpDatabases").GetSingle<ClpDatabases>();
+            TransactionModel r =  _db.CreateQuery("SELECT * FROM Transactions").GetSingle<TransactionModel>();
             Assert.IsTrue(r!=null);
 
         }
@@ -105,21 +106,21 @@ namespace QuaryChain.Test
         [Test]
         public async Task GetSingleAsync()
         {
-            ClpDatabases r = await _db.CreateQuery("SELECT * FROM ClpDatabases").GetSingleAsync<ClpDatabases>();
+            TransactionModel r = await _db.CreateQuery("SELECT * FROM Transactions").GetSingleAsync<TransactionModel>();
             Assert.IsTrue(r != null);
 
         }
         [Test]
         public void ExecuteScalar()
         {
-            int count = _db.CreateQuery("SELECT COUNT(*) FROM ClpDatabases").ExecuteScalar<int>();
+            int count = _db.CreateQuery("SELECT COUNT(*) FROM Transactions").ExecuteScalar<int>();
             Assert.IsTrue(count > 0);
         }
         [Test]
         public void UpdateSetatment()
         {
-           int count= _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                .AddParameter("@DbId", "DB01").ExecuteNonQuery();
+           int count= _db.CreateQuery("UPDATE Transactions SET [Description]='Petrol - 95' WHERE Id=@Id")
+                .AddParameter("@Id", new Guid("5072C3EE-8977-4113-883D-019530F6ACF0"), DbType.Guid).ExecuteNonQuery();
             Assert.IsTrue(count > 0);
         }
 
@@ -127,10 +128,10 @@ namespace QuaryChain.Test
         public void TransactionRollback()
         {
              _db.BeginTransaction();
-            int count = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DB01").ExecuteNonQuery();
-            int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DEPLOY").ExecuteNonQuery();
+            int count = _db.CreateQuery("UPDATE Transactions SET [Description]='Petrol - 95' WHERE Id=@Id")
+                 .AddParameter("@Id", new Guid("5072C3EE-8977-4113-883D-019530F6ACF0"), DbType.Guid).ExecuteNonQuery();
+            int count2 = _db.CreateQuery("UPDATE Transactions SET [Description]='Petrol - 97' WHERE Id=@Id")
+                 .AddParameter("@Id", new Guid("1f8a80d7-026f-4c6a-9845-151ccd2c6e84"), DbType.Guid).ExecuteNonQuery();
             _db.RollbackTransaction();
             Assert.IsTrue(count==1 && count2==1);
         }
@@ -138,11 +139,11 @@ namespace QuaryChain.Test
         public void TransactionCommit()
         {
             _db.BeginTransaction();
-            int count = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DB01").ExecuteNonQuery();
-            int count2 = _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DEPLOY").ExecuteNonQuery();
-            _db.RollbackTransaction();
+            int count = _db.CreateQuery("UPDATE Transactions SET [Description]='Petrol - 95' WHERE Id=@Id")
+             .AddParameter("@Id", new Guid("5072C3EE-8977-4113-883D-019530F6ACF0"), DbType.Guid).ExecuteNonQuery();
+            int count2 = _db.CreateQuery("UPDATE Transactions SET [Description]='Petrol - 97' WHERE Id=@Id")
+                 .AddParameter("@Id", new Guid("1f8a80d7-026f-4c6a-9845-151ccd2c6e84"), DbType.Guid).ExecuteNonQuery();
+            _db.CommitTransaction();
             Assert.IsTrue(count == 1 && count2 == 1);
         }
 
@@ -150,18 +151,18 @@ namespace QuaryChain.Test
         [Test]
         public async Task UpdateSetatmentAsync()
         {
-            int count = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB02 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DB01").ExecuteNonQueryAsync();
+            int count = await _db.CreateQuery("UPDATE Transactions SET [Description]='Petrol - 95' WHERE Id=@Id")
+                 .AddParameter("@Id", new Guid("5072C3EE-8977-4113-883D-019530F6ACF0"), DbType.Guid).ExecuteNonQueryAsync();
             Assert.IsTrue(count > 0);
         }
         [Test]
         public async Task TransactionCommitAsync()
         {
             _db.BeginTransaction();
-            int count = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DB01").ExecuteNonQueryAsync();
-            int count2 = await _db.CreateQuery("UPDATE ClpDatabases SET [Description]='DB01 -test' WHERE DbId=@DbId")
-                 .AddParameter("@DbId", "DEPLOY").ExecuteNonQueryAsync();
+            int count = await _db.CreateQuery("UPDATE Transactions SET [Description]='Petrol - 95' WHERE Id=@Id")
+           .AddParameter("@Id", new Guid("5072C3EE-8977-4113-883D-019530F6ACF0"), DbType.Guid).ExecuteNonQueryAsync();
+            int count2 = await _db.CreateQuery("UPDATE Transactions SET [Description]='Petrol - 97' WHERE Id=@Id")
+                 .AddParameter("@Id", new Guid("1f8a80d7-026f-4c6a-9845-151ccd2c6e84"), DbType.Guid).ExecuteNonQueryAsync();
             _db.RollbackTransaction();
             Assert.IsTrue(count == 1 && count2 == 1);
         }
@@ -194,16 +195,11 @@ namespace QuaryChain.Test
         [Test]
         public void HasRecords()
         {
-            bool result =_db.HasRecords("ClpDatabases", "1=1");
+            bool result =_db.HasRecords("Transactions", "1=1");
             Assert.IsTrue(result);
         }
 
-        [Test]
-        public void GetDbValue()
-        {
-            string result = (string) _db.GetDbValue("DbType","ClpDatabases", "DbId='DB01'");
-            Assert.IsTrue(result=="L");
-        }
+
 
         [Test]
         public void GetScheme()
@@ -215,47 +211,51 @@ namespace QuaryChain.Test
         [Test]
         public void CallStoredProcedureWithNonQuery_ReturnOutput()
         {
-        Dictionary<string,dynamic>result=   _db.CreateStoredProcedure("SpClpRootGroupGet")
-                .AddParameter("@orgCode", "ViewPoint")
-                .AddOutputParameter("@output", DbType.String)
-                .AddParameter("@userCode", "sm").ExecuteProcedure();
+        Dictionary<string,dynamic>result=   _db.CreateStoredProcedure("NewTransaction")
+                .AddParameter("@date", DateTime.Today)
+                .AddParameter("@category", "Food")
+                .AddParameter("@description", "Kajang Satay")
+                .AddParameter("@price",(decimal)50.10)
+                .AddOutputParameter("@newId", DbType.Guid)
+                .ExecuteProcedure();
 
-            Assert.IsTrue(! String.IsNullOrEmpty(result["@output"].ToString()));
+            Assert.IsTrue(! String.IsNullOrEmpty(result["@newId"].ToString()));
         }
 
-        [Test]
-        public void CallStoredProcedureWithNonQuery_ReturnValue()
-        {
-            Dictionary<string, dynamic> result = _db.CreateStoredProcedure("SpDocNumGet")
-                    .AddParameter("@entCode", "GENERAL")
-                    .AddParameter("@dType", "CPA")
-                    .AddParameter("@mustbeNumeric", true)
-                    .AddReturnValueParameter("@return", DbType.Int64).ExecuteProcedure();
+        //[Test]
+        //public void CallStoredProcedureWithNonQuery_ReturnValue()
+        //{
+        //    Dictionary<string, dynamic> result = _db.CreateStoredProcedure("SpDocNumGet")
+        //            .AddParameter("@entCode", "GENERAL")
+        //            .AddParameter("@dType", "CPA")
+        //            .AddParameter("@mustbeNumeric", true)
+        //            .AddReturnValueParameter("@return", DbType.Int64).ExecuteProcedure();
 
-            Assert.IsTrue(((Int64)result["@return"]>0));
-        }
+        //    Assert.IsTrue(((Int64)result["@return"]>0));
+        //}
 
         [Test]
         public void CallStoredProcedureWithDataTable()
         {
-            DataTable dt = _db.CreateStoredProcedure("SpClpMenusGet").AddParameter("@UserRole", "WM").GetDataTable();
+            DataTable dt = _db.CreateStoredProcedure("GetTransactionFromMonthAndYear")
+                .AddParameter("@year", 2022)
+                .AddParameter("@month",4).GetDataTable();
             Assert.IsTrue(dt.Rows.Count > 0);
         }
 
-        private class ClpDatabases
+        private class TransactionModel
         {
-            public string DbId { get; set; }
-            public string Description { get; set; }
-            public string DbType { get; set; }
-            public string ServerName { get; set; }
+            public Guid Id { get; set; }
+            public DateTime? Date { get; set; }
+            public string? Category { get; set; }
+            public string? Description { get; set; }
 
-            public int port { get; set; }
+            public Decimal? Price { get; set; }
         }
 
-        private enum RecStatus
+        private enum Category
         {
-            Inactive=0,
-            Active=1
+           Bill=1
         }
     }
 }

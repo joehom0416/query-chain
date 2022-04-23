@@ -74,13 +74,8 @@ namespace QuaryChain
             dbParameter.ParameterName = parameterName;
             dbParameter.DbType = dbType;
             dbParameter.Direction = parameterDirection;
-            if ((dbType == DbType.DateTime || dbType == DbType.Date) && !string.IsNullOrEmpty(value + ""))
-            {
-                DateTime dateTimeValue = DateTime.Parse((string)value);
-                dbParameter.Value = dateTimeValue.ToString("yyyy-MM-ddTHH:mm:ss");
-            }
-            else
-                dbParameter.Value = value;
+
+            dbParameter.Value = value;
             _paramaters.Add(dbParameter);
             return this;
         }
