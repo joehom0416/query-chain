@@ -20,13 +20,15 @@ namespace QuaryChain
         private  bool _transactionMode;
         private DbType[] _supportedDbTypes;
         public  SqlConnection Connection { get { return _dbConnection; } }
-        public QueryConnection(SqlConnectionStringBuilder builder)
+        public QueryConnection(SqlConnectionStringBuilder builder): this(builder.ConnectionString)
         {
-            _dbConnection = new SqlConnection(builder.ConnectionString);
-            _supportedDbTypes =new DbType[0];
+        }
+        public QueryConnection(string connectionString)
+        {
+            _dbConnection = new SqlConnection(connectionString);
+            _supportedDbTypes = new DbType[0];
         }
 
-        
         public void SetSupportedDbType(params DbType[] dbTypes)
         {
             _supportedDbTypes = dbTypes;
