@@ -1,6 +1,11 @@
 # query-chain
 query-chain is a lightweight data access library for SQL server, it is based on a Fluent API design pattern ( a.k.a Fluent Interface) where the result is formulated by method chaining.
 
+# Install
+Nuget package
+```
+Install-Package QuaryChain -Version 1.0.0
+```
 
 # Initialising connection
 QueryConnection is the core component, you required this to create Query object.
